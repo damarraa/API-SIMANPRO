@@ -23,7 +23,7 @@ class StoreJobTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'job_type' => 'required|string|max:255',
+            'job_type' => 'required|string|max:255|unique:job_types,job_type',
         ];
     }
 }

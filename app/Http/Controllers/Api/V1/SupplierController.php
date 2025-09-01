@@ -34,7 +34,7 @@ class SupplierController extends Controller
      */
     public function store(StoreSupplierRequest $request)
     {
-        $supplier = Supplier::create($request->validate());
+        $supplier = Supplier::create($request->validated());
 
         return (new SupplierResource($supplier))
             ->response()

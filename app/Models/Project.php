@@ -47,9 +47,20 @@ class Project extends Model
         return $this->hasMany(ProjectExpense::class);
     }
 
+    // public function team(): BelongsToMany
+    // {
+    //     return $this->belongsToMany(User::class, 'project_user');
+    // }
     public function team(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'project_user');
+        return $this->belongsToMany(User::class, 'project_user')
+            ->withPivot('id', 'role_in_project', 'external_member_name')
+            ->withTimestamps();
+    }
+
+    public function teamMembers(): HasMany
+    {
+        return $this->hasMany(ProjectTeamMember::class);
     }
 
     public function user(): BelongsTo
@@ -86,7 +97,7 @@ class Project extends Model
         return Attribute::make(get: function () {
             // 1. Hitung biaya dari realisasi pekerjaan (Optimal)
             $workItems = $this->workItems()->with('activityLogs')->get();
-            
+
             $realized_work_total = $workItems->reduce(function ($carry, $item) {
                 $totalRealizedVolume = $item->activityLogs->sum('realized_volume');
                 // Asumsi `unit_price` ada di $item, jika tidak, perlu di-join atau di-load
@@ -108,6 +119,26 @@ class Project extends Model
     {
         return Attribute::make(
             get: fn() => $this->total_budget - $this->spent_budget
+        );
+    }
+
+    public function vehicleAssignments()
+    {
+        return $this->hasMany(VehicleAssignment::class);
+    }
+
+    /**
+     * Menampilkan kendaraan yang ditugaskan ke proyek
+     */
+    public function assignedVehicles()
+    {
+        return $this->hasManyThrough(
+            Vehicle::class,
+            VehicleAssignment::class,
+            'project_id',
+            'id',
+            'id',
+            'vehicle_id'
         );
     }
 }

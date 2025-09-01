@@ -25,7 +25,7 @@ class UpdateMaterialRequest extends FormRequest
         $materialId = $this->route('material')->id;
 
         return [
-            'sku' => 'sometimes|required|string|max:255|unique:materials,sku' . $materialId,
+            'sku' => 'sometimes|required|string|max:255|unique:materials,sku,' . $materialId,
             'name' => 'sometimes|required|string|max:255',
             'unit' => 'sometimes|required|string|max:100',
             'description' => 'sometimes|nullable|string',

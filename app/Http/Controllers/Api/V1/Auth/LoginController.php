@@ -29,7 +29,15 @@ class LoginController extends Controller
         $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            // 'user' => $user,
+
+            // Update 28/07/2025
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->getRoleNames()->first(),
+            ],
             'token' => $token
         ]);
     }

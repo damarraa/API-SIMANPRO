@@ -26,6 +26,7 @@ class StoreStockMovementRequest extends FormRequest
         return [
             'material_id' => 'required|integer|exists:materials,id',
             'warehouse_id' => 'required|integer|exists:warehouses,id',
+            'project_id' => 'nullable|integer|exists:projects,id',
             'quantity' => 'required|numeric|min:0.01',
             'type' => 'required|in:in,out,return,adjustment',
             'remarks' => 'nullable|string|max:1000'

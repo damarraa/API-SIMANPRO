@@ -34,7 +34,7 @@ class WarehouseController extends Controller
      */
     public function store(StoreWarehouseRequest $request)
     {
-        $warehouse = Warehouse::create($request->validate());
+        $warehouse = Warehouse::create($request->validated());
 
         return (new WarehouseResource($warehouse->load('pic')))
             ->response()

@@ -7,6 +7,7 @@ use App\Http\Requests\StoreAssetAssignmentRequest;
 use App\Http\Requests\UpdateAssetAssignmentRequest;
 use App\Http\Resources\AssetAssignmentResource;
 use App\Models\AssetAssignment;
+use App\Models\Tool;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -15,9 +16,9 @@ class AssetAssignmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Tool $tool)
     {
-        $assignments = AssetAssignment::with(['tool', 'project', 'assignedBy'])->latest()->get();
+        $assignments = $tool->assignments()->with(['tool', 'project', 'assignedBy'])->latest()->get();
         return AssetAssignmentResource::collection($assignments);
     }
 

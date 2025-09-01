@@ -24,6 +24,9 @@ class UserSeeder extends Seeder
 
         $superAdmin->assignRole('Super Admin');
 
+        /**
+         * 
+         */
         // --- Dummy Project Manager ---
         $pm = User::create([
             'name' => 'PM ABC',

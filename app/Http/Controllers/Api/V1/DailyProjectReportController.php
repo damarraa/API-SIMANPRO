@@ -8,11 +8,13 @@ use App\Http\Requests\UpdateDailyProjectReportRequest;
 use App\Http\Resources\DailyProjectReportResource;
 use App\Models\DailyProjectReport;
 use App\Models\Project;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class DailyProjectReportController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */

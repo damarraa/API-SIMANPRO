@@ -23,7 +23,7 @@ class StoreMaintenanceLogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'vehicle_id' => 'required|integer|exists:vehicles,id',
+            // 'vehicle_id' => 'required|integer|exists:vehicles,id',
             'maintenance_date' => 'required|date',
             'odometer' => 'required|integer|min:0',
             'type' => 'required|string|in:Rutin,Insidental,Darurat',

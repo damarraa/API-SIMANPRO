@@ -16,7 +16,7 @@ class JobTypeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'job_type' => $this->job_type,
+            'name' => $this->job_type,
         ];
     }
 }

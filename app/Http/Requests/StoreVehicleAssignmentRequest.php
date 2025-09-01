@@ -23,11 +23,13 @@ class StoreVehicleAssignmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'vehicle_id' => 'required|integer|exists:vehicles,id',
+            // 'vehicle_id' => 'required|integer|exists:vehicles,id',
             'user_id' => 'required|integer|exists:users,id',
             'project_id' => 'required|integer|exists:projects,id',
             'start_datetime' => 'required|date',
+            'end_datetime' => 'nullable|date',
             'start_odometer' => 'required|string|max:255',
+            'end_odometer' => 'nullable|string',
             'notes' => 'nullable|string',
         ];
     }

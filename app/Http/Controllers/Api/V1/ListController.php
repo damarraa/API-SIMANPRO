@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Material;
 use App\Models\Project;
+use App\Models\Supplier;
 use App\Models\Tool;
 use App\Models\User;
+use App\Models\Vehicle;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
@@ -41,8 +43,16 @@ class ListController extends Controller
     /**
      * Mengambil daftar semua proyek.
      */
-    public function projects()
+    public function projects(Request $request)
     {
+        $user = $request->user();
+        $query = Project::query();
+
+        if ($user->hasRole('Project Manager')) {
+            $query->where('project_manager_id', $user->id);
+        } elseif ($user->hasRole('Supervisor')) {
+            $query->whereHas('team', fn($q) => $q->where('user_id', $user->id));
+        }
         return Project::select('id', 'job_name as name')->get();
     }
 
@@ -68,5 +78,29 @@ class ListController extends Controller
     public function users()
     {
         return User::select('id', 'name')->get();
+    }
+
+    /**
+     * Mengambil daftar user berdasarkan role spesifik.
+     */
+    public function usersByRole(string $roleName)
+    {
+        return User::whereHas('roles', fn($q) => $q->where('name', $roleName))->select('id', 'name')->get();
+    }
+
+    /**
+     * Mengambil daftar semua supplier.
+     */
+    public function suppliers()
+    {
+        return Supplier::select('id', 'name')->get();
+    }
+
+    /**
+     * Mengambil daftar semua kendaraan dan alat berat.
+     */
+    public function vehicles()
+    {
+        return Vehicle::select('id', 'name', 'license_plate')->get();
     }
 }

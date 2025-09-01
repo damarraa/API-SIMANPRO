@@ -26,6 +26,13 @@ class UserResource extends JsonResource
             'profile_picture_url' => $this->profile_picture ? Storage::url($this->profile_picture) : null,
             'signature_url' => $this->signature ? Storage::url($this->signature) : null,
             'roles' => $this->whenLoaded('roles', fn() => $this->roles->pluck('name')),
+
+            'pivot' => $this->whenPivotLoaded('project_user', function () {
+                return [
+                    'role_in_project' => $this->pivot->role_in_project,
+                    'external_member_name' => $this->pivot->external_member_name,
+                ];
+            }),
         ];
     }
 }

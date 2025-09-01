@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
 
             // Data Utama yang bergantung pada Master Data
             ProjectSeeder::class,
+            DailyProjectReportSeeder::class,
             InventoryStockSeeder::class,
         ]);
     }

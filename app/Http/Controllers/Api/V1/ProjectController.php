@@ -6,18 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\VehicleAssignmentResource;
 use App\Models\Project;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class ProjectController extends Controller
 {
+    use AuthorizesRequests;
+    
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $projects = Project::with(['projectManager', 'client', 'defaultWarehouse', 'job'])->get();
+        $projects = Project::with(['projectManager', 'client', 'defaultWarehouse', 'job', 'team', 'assignedVehicles'])->get();
         return ProjectResource::collection($projects);
     }
 
@@ -46,7 +50,19 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        return new ProjectResource($project->load(['client', 'projectManager', 'job', 'defaultWarehouse']));
+        return new ProjectResource($project->load(['client', 'projectManager', 'job', 'defaultWarehouse', 'team', 'assignedVehicles']));
+    }
+
+    /**
+     * Menampilkan semua penugasan
+     * kendaraan dan alat berat untuk proyek.
+     */
+    public function vehicleAssignments(Project $project)
+    {
+        $this->authorize('view', $project);
+
+        $assignments = $project->vehicleAssignments()->with(['vehicle', 'driver'])->get();
+        return VehicleAssignmentResource::collection($assignments);
     }
 
     /**

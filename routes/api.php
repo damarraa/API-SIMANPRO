@@ -1,28 +1,35 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AssetAssignmentController;
+use App\Http\Controllers\Api\V1\AssetLocationController;
 use App\Http\Controllers\Api\V1\Auth\LoginController;
 use App\Http\Controllers\Api\V1\Auth\RegisterController;
 use App\Http\Controllers\Api\V1\ClientController;
 use App\Http\Controllers\Api\V1\DailyProjectReportController;
+use App\Http\Controllers\Api\V1\InventoryStockController;
 use App\Http\Controllers\Api\V1\JobTypeController;
 use App\Http\Controllers\Api\V1\ListController;
 use App\Http\Controllers\Api\V1\MaintenanceLogController;
 use App\Http\Controllers\Api\V1\MaterialController;
+use App\Http\Controllers\Api\V1\MaterialRequisitionController;
 use App\Http\Controllers\Api\V1\PermissionController;
 use App\Http\Controllers\Api\V1\ProjectController;
 use App\Http\Controllers\Api\V1\ProjectExpenseController;
 use App\Http\Controllers\Api\V1\ProjectTeamController;
 use App\Http\Controllers\Api\V1\ProjectWorkItemController;
+use App\Http\Controllers\Api\V1\PurchaseOrderController;
 use App\Http\Controllers\Api\V1\RoleController;
 use App\Http\Controllers\Api\V1\StockMovementController;
 use App\Http\Controllers\Api\V1\SupplierController;
 use App\Http\Controllers\Api\V1\ToolController;
+use App\Http\Controllers\Api\V1\ToolRequisitionController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\VehicleAssignmentController;
 use App\Http\Controllers\Api\V1\VehicleController;
+use App\Http\Controllers\Api\V1\VehicleRequisitionController;
 use App\Http\Controllers\Api\V1\WarehouseController;
 use App\Http\Controllers\Api\V1\WorkActivityLogController;
+use App\Models\MaterialRequisition;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -65,22 +72,41 @@ Route::middleware('auth:sanctum')->group(function () {
             ->shallow();
         // Manajemen tim proyek
         Route::get('projects/{project}/team', [ProjectTeamController::class, 'index']);
-        Route::post('projects/{project}/team', [ProjectTeamController::class, 'store']);
+        // Route::post('projects/{project}/team', [ProjectTeamController::class, 'store']);
+        Route::post('project-team', [ProjectTeamController::class, 'store']);
         Route::delete('projects/{project}/team/{user}', [ProjectTeamController::class, 'destroy']);
+        // Manajemen penugasan kendaraan dan alat berat
+        Route::get('projects/{project}/vehicle-assignments', [ProjectController::class, 'vehicleAssignments']);
 
         // --- Modul Inventory & Materials ---
         Route::apiResource('tools', ToolController::class);
         Route::apiResource('materials', MaterialController::class);
         Route::apiResource('suppliers', SupplierController::class);
         Route::apiResource('warehouses', WarehouseController::class);
+        // Nested route
+        Route::apiResource('warehouses.inventory-stocks', InventoryStockController::class)->only(['index']);
+        Route::apiResource('tools.asset-locations', AssetLocationController::class)->only(['index', 'store']);
+        Route::apiResource('tools.asset-assignments', AssetAssignmentController::class)->only(['index', 'store']);
         // Log pergerakan stok
         Route::apiResource('stock-movements', StockMovementController::class)->only(['index', 'show', 'store']);
-        Route::apiResource('asset-assignments', AssetAssignmentController::class);
+        // Request material
+        Route::apiResource('projects.material-requisitions', MaterialRequisitionController::class)->scoped()->shallow();
+        // Request tool
+        Route::apiResource('tool-requisitions', ToolRequisitionController::class);
+        // Request vehicle
+        Route::apiResource('vehicle-requisitions', VehicleRequisitionController::class);
+
+        // --- Modul Finance ---
+        Route::apiResource('purchase-orders', PurchaseOrderController::class);
 
         // --- Modul Kendaraan & Alat Berat ---
         Route::apiResource('vehicles', VehicleController::class);
-        Route::apiResource('maintenance-logs', MaintenanceLogController::class);
-        Route::apiResource('vehicle-assignments', VehicleAssignmentController::class);
+        // Nested route
+        Route::apiResource('vehicles.maintenance-logs', MaintenanceLogController::class);
+        // Route::apiResource('vehicles.vehicle-assignments', VehicleAssignmentController::class);
+        Route::apiResource('vehicles.vehicle-assignments', VehicleAssignmentController::class)->scoped()->shallow();
+        // All vehicle assignment
+        Route::get('vehicle-assignments', [VehicleAssignmentController::class, 'index']);
 
         // --- Modul User & Manajemen Hak Akses ---
         Route::apiResource('clients', ClientController::class);
@@ -95,8 +121,11 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/project-managers', 'projectManagers');
             Route::get('/projects', 'projects');
             Route::get('/materials', 'materials');
+            Route::get('/suppliers', 'suppliers');
+            Route::get('/vehicles', 'vehicles');
             Route::get('/tools', 'tools');
             Route::get('/users', 'users');
+            Route::get('/users-by-role/{roleName}', 'usersByRole');
         });
     });
 

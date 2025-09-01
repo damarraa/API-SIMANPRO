@@ -26,7 +26,7 @@ class VehicleResource extends JsonResource
             'capacity' => $this->capacity,
             'vehicle_license' => $this->vehicle_license,
             'license_expiry_date' => $this->license_expiry_date,
-            'vehicle_identity_date' => $this->vehicle_identity_date,
+            'vehicle_identity_number' => $this->vehicle_identity_number,
             'engine_number' => $this->engine_number,
             'tax_due_date' => $this->tax_due_date,
             'notes' => $this->notes,

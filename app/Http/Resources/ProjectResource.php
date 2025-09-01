@@ -34,6 +34,8 @@ class ProjectResource extends JsonResource
             'client' => $this->whenLoaded('client', fn() => $this->client->client_name),
             'default_warehouse' => $this->whenLoaded('defaultWarehouse', fn() => $this->defaultWarehouse->warehouse_name),
             'job_category' => $this->whenLoaded('job', fn() => $this->job->job_type),
+            'team' => UserResource::collection($this->whenLoaded('team')),
+            'assigned_vehicles' => VehicleResource::collection($this->whenLoaded('assignedVehicles')),
         ];
     }
 }
